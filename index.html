@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>wasl passport</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root { --bg: #fdfbf7; --brown: #5d4037; --gold: #d4af37; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #edece8; color: var(--brown); margin: 0; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 20px; }
+        .card { width: 100%; max-width: 450px; background: var(--bg); border: 3px solid var(--brown); border-radius: 16px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+        .input-box { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid var(--brown); border-radius: 8px; background: transparent; color: var(--brown); font-size: 1em; font-weight: bold; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+        .item { border: 1px solid var(--brown); padding: 10px; text-align: center; border-radius: 8px; cursor: pointer; transition: 0.3s; font-size: 0.9em; font-weight: bold; }
+        .item.active { background: var(--brown); color: white; }
+        .badge-select { width: 100%; padding: 10px; border: 1px solid var(--brown); border-radius: 8px; background: var(--bg); font-size: 1em; font-weight: bold; color: var(--brown); margin-top: 10px; }
+        .firework { position: fixed; font-size: 60px; pointer-events: none; z-index: 1000; animation: explode 4s ease-out forwards; }
+        @keyframes explode {
+            0% { transform: scale(0.5) translate(0, 0); opacity: 1; }
+            50% { opacity: 1; }
+            100% { transform: scale(3) translate(var(--x), var(--y)); opacity: 0; }
+        }
+        h2 { font-size: 1.3em; margin: 5px 0; text-align: center; font-weight: 800; }
+        h3 { font-size: 1em; margin: 15px 0 5px 0; border-bottom: 2px solid var(--gold); padding-bottom: 2px; font-weight: bold; }
+        .lang-btn { background: var(--brown); color: white; border: none; padding: 4px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8em; font-weight: bold; }
+        .star { cursor: pointer; font-size: 2.2em; transition: 0.3s; color: #ccc; }
+        .star.active { color: var(--gold); }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="flex justify-between items-center mb-4">
+        <button class="lang-btn" onclick="toggleLang()" id="langBtn">English</button>
+        <span class="font-bold text-[14px]" id="waslAcademyTitle">أكاديمية وَصْل</span>
+    </div>
+    
+    <h2 id="mainTitle">جواز سفر وَصْل للتميز</h2>
+
+    <input type="text" class="input-box" id="studentName" placeholder="اسم الطالب">
+    <input type="text" class="input-box" id="journeyName" placeholder="اسم الرحلة">
+
+    <h3 id="achieveTitle">إنجازات الحصة:</h3>
+    <div class="grid" id="achievementsGrid">
+        <div class="item" onclick="celebrateBasic('✅', this)">حفظ / تلاوة</div>
+        <div class="item" onclick="celebrateBasic('✅', this)">تركيز وتفاعل</div>
+        <div class="item" onclick="celebrateBasic('✅', this)">تفسير آية</div>
+        <div class="item" onclick="celebrateBasic('✅', this)">تطبيق خُلق</div>
+    </div>
+
+    <h3 id="heartTitle">كلمة في قلبي:</h3>
+    <textarea class="input-box" id="heart" rows="2" placeholder="ما شعورك تجاه الآية أو الدرس اليوم؟"></textarea>
+
+    <h3 id="homeTitle">مهمة في بيتي:</h3>
+    <textarea class="input-box" id="home" rows="2" placeholder="مهمة للقيام بها مع عائلتي أو أصدقائي أو مجتمعي"></textarea>
+
+    <h3 id="badgeTitle">وسام البطل:</h3>
+    <select class="badge-select" id="badgeSelect" onchange="handleBadgeSelect(this)">
+        <option value="" id="selectPlaceholder">اختر وساماً...</option>
+        <option value="🧠">بطل/بطلة الحفظ 🧠</option>
+        <option value="💎">فارس/فارسة التجويد 💎</option>
+        <option value="✨">نجم/نجمة الأخلاق ✨</option>
+        <option value="🔍">مستكشف/مستكشفة المعاني 🔍</option>
+        <option value="👑">قائد/قائدة الحصة 👑</option>
+    </select>
+
+    <h3 id="ratingTitle">تقييم الحصة:</h3>
+    <div class="flex justify-center gap-2 my-4" id="starContainer">
+        <span class="star" onclick="rate(1)">★</span>
+        <span class="star" onclick="rate(2)">★</span>
+        <span class="star" onclick="rate(3)">★</span>
+        <span class="star" onclick="rate(4)">★</span>
+        <span class="star" onclick="rate(5)">★</span>
+    </div>
+</div>
+
+<script>
+    let isArabic = true;
+
+    function toggleLang() {
+        isArabic = !isArabic;
+        document.body.dir = isArabic ? 'rtl' : 'ltr';
+        document.getElementById('langBtn').innerText = isArabic ? 'English' : 'العربية';
+        document.getElementById('waslAcademyTitle').innerText = isArabic ? 'أكاديمية وَصْل' : 'Wasl Academy';
+        document.getElementById('mainTitle').innerText = isArabic ? 'جواز سفر وَصْل للتميز' : 'Wasl Excellence Passport';
+        document.getElementById('studentName').placeholder = isArabic ? 'اسم الطالب' : 'Student Name';
+        document.getElementById('journeyName').placeholder = isArabic ? 'اسم الرحلة' : 'Journey Name';
+        document.getElementById('achieveTitle').innerText = isArabic ? 'إنجازات الحصة:' : 'Session Achievements:';
+        document.getElementById('heartTitle').innerText = isArabic ? 'كلمة في قلبي:' : 'A word in my heart:';
+        document.getElementById('heart').placeholder = isArabic ? 'ما شعورك تجاه الآية أو الدرس اليوم؟' : 'How do you feel about the verse or lesson today?';
+        document.getElementById('homeTitle').innerText = isArabic ? 'مهمة في بيتي:' : 'Mission at home/community:';
+        document.getElementById('home').placeholder = isArabic ? 'مهمة للقيام بها مع عائلتي أو أصدقائي أو مجتمعي' : 'Mission to do with my family, friends, or community...';
+        document.getElementById('badgeTitle').innerText = isArabic ? 'وسام البطل:' : 'Hero Badge:';
+        document.getElementById('ratingTitle').innerText = isArabic ? 'تقييم الحصة:' : 'Session Rating:';
+        document.getElementById('selectPlaceholder').innerText = isArabic ? 'اختر وساماً...' : 'Select a badge...';
+        
+        const gridLabels = isArabic ? ['حفظ / تلاوة', 'تركيز وتفاعل', 'تفسير آية', 'تطبيق خُلق'] : ['Memorization / Recitation', 'Focus / Engagement', 'Tafsir of one verse', 'Applying Ethics'];
+        document.querySelectorAll('#achievementsGrid .item').forEach((el, i) => el.innerText = gridLabels[i]);
+        
+        const badgeLabels = isArabic ? ['بطل/بطلة الحفظ 🧠', 'فارس/فارسة التجويد 💎', 'نجم/نجمة الأخلاق ✨', 'مستكشف/مستكشفة المعاني 🔍', 'قائد/قائدة الحصة 👑'] : ['Memorization Hero 🧠', 'Tajweed Knight 💎', 'Ethics Star ✨', 'Meaning Explorer 🔍', 'Session Leader 👑'];
+        document.querySelectorAll('#badgeSelect option:not([id="selectPlaceholder"])').forEach((el, i) => el.innerText = badgeLabels[i]);
+    }
+
+    function celebrateBasic(emoji, el) {
+        el.classList.toggle('active');
+        if(el.classList.contains('active')) triggerFireworks(emoji, 30);
+    }
+
+    function handleBadgeSelect(select) {
+        const val = select.value;
+        if(!val) return;
+        
+        triggerFireworks(val, 150);
+        if(val === '👑') playClap();
+    }
+
+    function rate(n) {
+        document.querySelectorAll('.star').forEach((s, i) => {
+            s.classList.toggle('active', i < n);
+        });
+    }
+
+    function triggerFireworks(emoji, count) {
+        for(let i=0; i<count; i++) {
+            const span = document.createElement('span');
+            span.innerText = emoji;
+            span.className = 'firework';
+            span.style.left = '50%';
+            span.style.top = '50%';
+            const x = (Math.random() - 0.5) * 800;
+            const y = (Math.random() - 0.5) * 800;
+            span.style.setProperty('--x', x + 'px');
+            span.style.setProperty('--y', y + 'px');
+            document.body.appendChild(span);
+            setTimeout(() => span.remove(), 4000);
+        }
+    }
+
+    function playClap() {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        for(let i=0; i<30; i++) {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.frequency.value = 400 + Math.random()*300;
+            gain.gain.setValueAtTime(0.2, ctx.currentTime + i*0.08);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i*0.08 + 0.2);
+            osc.start(ctx.currentTime + i*0.08);
+            osc.stop(ctx.currentTime + i*0.08 + 0.2);
+        }
+    }
+</script>
+</body>
+</html>
